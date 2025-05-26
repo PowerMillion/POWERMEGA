@@ -1,1 +1,1235 @@
-404: Not Found
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MegaLucky - Quest for the Stars</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: #e2e8f0;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        header {
+            background: rgba(17, 17, 17, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.5rem, 5vw, 1.75rem);
+            font-weight: bold;
+            color: #00ffff;
+            text-shadow: 0 0 10px #00ffff;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 1rem;
+        }
+
+        nav a {
+            color: #e2e8f0;
+            text-decoration: none;
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
+            transition: color 0.3s, text-shadow 0.3s;
+        }
+
+        nav a:hover {
+            color: #00ffff;
+            text-shadow: 0 0 5px #00ffff;
+        }
+
+        .menu-toggle {
+            display: none;
+            font-size: 1.5rem;
+            color: #00ffff;
+            cursor: pointer;
+        }
+
+        main {
+            padding: clamp(4rem, 10vw, 5rem) 1rem 1rem;
+        }
+
+        .section {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .section.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .hero {
+            text-align: center;
+            padding: clamp(2rem, 8vw, 3rem) 1rem;
+            background: radial-gradient(circle, rgba(0, 255, 255, 0.1) 0%, transparent 70%);
+        }
+
+        .hero h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2rem, 8vw, 3rem);
+            color: #00ffff;
+            text-shadow: 0 0 15px #00ffff;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
+            margin-bottom: 1.5rem;
+        }
+
+        .participant-count {
+            font-size: clamp(1rem, 3vw, 1.2rem);
+            color: #ff00ff;
+            margin-top: 1rem;
+            text-shadow: 0 0 5px #ff00ff;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #00ffff, #ff00ff);
+            color: #000;
+            padding: clamp(0.5rem, 2vw, 0.75rem) clamp(1rem, 3vw, 1.5rem);
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 0 10px #00ffff;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px #00ffff;
+        }
+
+        .testimonials {
+            max-width: 1200px;
+            margin: clamp(2rem, 8vw, 3rem) auto;
+            text-align: center;
+        }
+
+        .testimonials h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.5rem, 6vw, 2.25rem);
+            color: #00ffff;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 0 10px #00ffff;
+        }
+
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+        }
+
+        .testimonial {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 10px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+        }
+
+        .testimonial:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px #00ffff;
+        }
+
+        .testimonial img {
+            width: 100%;
+            height: auto;
+            max-height: 200px;
+            object-fit: contain;
+            border-radius: 10px;
+            margin-bottom: 0.5rem;
+            box-shadow: 0 0 5px #00ffff;
+        }
+
+        .next-draw {
+            text-align: center;
+            padding: clamp(1.5rem, 6vw, 2rem);
+        }
+
+        .next-draw h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.5rem, 6vw, 2.25rem);
+            margin-bottom: 1rem;
+            color: #00ffff;
+            text-shadow: 0 0 10px #00ffff;
+        }
+
+        #countdown {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.5rem, 6vw, 3rem);
+            color: #00ffff;
+            text-shadow: 0 0 10px #00ffff;
+        }
+
+        .entry-form {
+            max-width: 600px;
+            margin: clamp(2rem, 8vw, 3rem) auto;
+            background: rgba(255, 255, 255, 0.05);
+            padding: clamp(1rem, 4vw, 1.5rem);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+        }
+
+        .entry-form h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.2rem, 5vw, 1.75rem);
+            color: #00ffff;
+            margin-bottom: 1rem;
+            text-align: center;
+            text-shadow: 0 0 5px #00ffff;
+        }
+
+        .entry-form label {
+            display: block;
+            margin-bottom: 0.3rem;
+            font-size: clamp(0.9rem, 3vw, 1rem);
+        }
+
+        .entry-form input {
+            width: 100%;
+            padding: 0.5rem;
+            margin-bottom: 0.75rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 5px;
+            color: #e2e8f0;
+            font-size: clamp(0.9rem, 3vw, 1rem);
+            box-shadow: 0 0 5px #00ffff;
+        }
+
+        .number-picker {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .number-btn {
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            color: #e2e8f0;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.3s;
+        }
+
+        .number-btn.selected {
+            background: #00ffff;
+            color: #000;
+            transform: scale(1.1);
+        }
+
+        .number-btn:hover {
+            background: rgba(0, 255, 255, 0.5);
+        }
+
+        .draw-section {
+            max-width: 800px;
+            margin: clamp(2rem, 8vw, 3rem) auto;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.05);
+            padding: clamp(1rem, 4vw, 1.5rem);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+        }
+
+        .draw-animation {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.75rem;
+            margin: 1rem 0;
+        }
+
+        .number-ball {
+            width: clamp(40px, 10vw, 50px);
+            height: clamp(40px, 10vw, 50px);
+            background: #00ffff;
+            color: #000;
+            font-size: clamp(0.9rem, 3vw, 1.2rem);
+            font-weight: bold;
+            line-height: clamp(40px, 10vw, 50px);
+            text-align: center;
+            border-radius: 50%;
+            animation: reveal 0.8s ease-in-out;
+            box-shadow: 0 0 10px #00ffff;
+        }
+
+        .bonus-ball {
+            width: clamp(40px, 10vw, 50px);
+            height: clamp(40px, 10vw, 50px);
+            background: #ff00ff;
+            color: #000;
+            font-size: clamp(0.9rem, 3vw, 1.2rem);
+            font-weight: bold;
+            line-height: clamp(40px, 10vw, 50px);
+            text-align: center;
+            border-radius: 50%;
+            animation: reveal 1.2s ease-in-out;
+            box-shadow: 0 0 10px #ff00ff;
+        }
+
+        .celebration {
+            font-size: clamp(1.5rem, 6vw, 2rem);
+            color: #ff00ff;
+            text-shadow: 0 0 15px #ff00ff;
+            animation: pulse 2s infinite;
+            margin-top: 1rem;
+            position: relative;
+        }
+
+        .celebration::before {
+            content: '✨';
+            position: absolute;
+            left: -20px;
+            animation: sparkle 1s infinite;
+        }
+
+        .celebration::after {
+            content: '✨';
+            position: absolute;
+            right: -20px;
+            animation: sparkle 1s infinite 0.5s;
+        }
+
+        @keyframes reveal {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes sparkle {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        #drawResults {
+            margin-top: 1rem;
+        }
+
+        #drawResults p {
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
+            margin: 0.5rem 0;
+        }
+
+        .results-section, .how-to-play-section, .leaderboard-section {
+            max-width: 800px;
+            margin: clamp(2rem, 8vw, 3rem) auto;
+            background: rgba(255, 255, 255, 0.05);
+            padding: clamp(1rem, 4vw, 1.5rem);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            display: block;
+            overflow-x: auto;
+        }
+
+        .results-table th, .results-table td {
+            padding: clamp(0.5rem, 2vw, 0.75rem);
+            text-align: left;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+        }
+
+        .results-table th {
+            background: rgba(0, 255, 255, 0.1);
+            color: #00ffff;
+        }
+
+        .results-table tr:hover {
+            background: rgba(0, 255, 255, 0.05);
+        }
+
+        .rules-section, .how-to-play-section h3 {
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
+            color: #00ffff;
+            margin: 1rem 0 0.5rem;
+        }
+
+        .rules-section ul, .how-to-play-section ul {
+            list-style: disc;
+            padding-left: 1.5rem;
+            font-size: clamp(0.9rem, 3vw, 1rem);
+        }
+
+        .rules-section ul li, .how-to-play-section ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .leaderboard-table th, .leaderboard-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+        }
+
+        .leaderboard-table th {
+            background: rgba(0, 255, 255, 0.1);
+            color: #00ffff;
+        }
+
+        footer {
+            background: rgba(17, 17, 17, 0.8);
+            padding: 1rem;
+            text-align: center;
+            width: 100%;
+        }
+
+        .social-links a {
+            color: #e2e8f0;
+            margin: 0 0.5rem;
+            text-decoration: none;
+            font-size: clamp(0.9rem, 3vw, 1rem);
+            transition: color 0.3s, text-shadow 0.3s;
+        }
+
+        .social-links a:hover {
+            color: #00ffff;
+            text-shadow: 0 0 5px #00ffff;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+                position: fixed;
+                top: 60px;
+                right: 0;
+                background: rgba(17, 17, 17, 0.9);
+                width: 200px;
+                padding: 1rem;
+                transform: translateX(100%);
+                transition: transform 0.3s;
+            }
+
+            nav ul.active {
+                transform: translateX(0);
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .number-picker {
+                justify-content: center;
+            }
+
+            .draw-animation {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+
+            .results-table, .leaderboard-table {
+                font-size: 0.8rem;
+            }
+
+            .testimonial-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .testimonial {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 1.75rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            #countdown {
+                font-size: 1.5rem;
+            }
+        }
+
+        .pending-choices {
+            margin-top: 1rem;
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
+            color: #00ffff;
+            text-shadow: 0 0 5px #00ffff;
+        }
+
+        .whatsapp-btn {
+            background: #25D366;
+            color: #fff;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 1rem;
+            box-shadow: 0 0 10px #25D366;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .whatsapp-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px #25D366;
+        }
+
+        .chosen-numbers {
+            margin-top: 1rem;
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
+            color: #00ffff;
+            text-shadow: 0 0 5px #00ffff;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="particleCanvas"></canvas>
+    <header>
+        <div class="logo">MegaLucky</div>
+        <nav>
+            <span class="menu-toggle" onclick="toggleMenu()">☰</span>
+            <ul id="nav-menu">
+                <li><a href="#" onclick="showSection('home')">Home</a></li>
+                <li><a href="#" onclick="showSection('entry')">Entry</a></li>
+                <li><a href="#" onclick="showSection('draw')">Draw</a></li>
+                <li><a href="#" onclick="showSection('results')">Results</a></li>
+                <li><a href="#" onclick="showSection('how-to-play')">How to Play</a></li>
+                <li><a href="#" onclick="showSection('leaderboard')">Leaderboard</a></li>
+                <li><a href="#" onclick="showSection('rules')">Rules</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <!-- Section Home -->
+        <section id="home" class="section active">
+            <div class="hero">
+                <h1>Welcome to MegaLucky</h1>
+                <p>Join the Quest for the Stars and win up to $100,000,000!</p>
+                <button class="btn" onclick="showSection('entry')">Enter Now</button>
+                <p class="participant-count">Join <span id="participantCount">0</span> cosmic explorers!</p>
+            </div>
+            <div class="testimonials">
+                <h2>Testimonials from Galactic Winners</h2>
+                <div class="testimonial-grid">
+                    <div class="testimonial">
+                        <img src="images/WhatsApp Image 2025-05-19 at 7.46.34 AM.jpeg" alt="Sophie L.">
+                        <p>"MegaLucky changed my life! I won $1,000,000!" - Sophie L.</p>
+                    </div>
+                    <div class="testimonial">
+                        <img src="images/temoin10.png" alt="Cécile">
+                        <p>"wonderful day so cool!" - Cécile.</p>
+                    </div>
+                    <div class="testimonial">
+                        <img src="images/WhatsApp Image 2025-05-19 at 7.46.34 AM.jpeg" alt="Marc D.">
+                        <p>"An amazing experience, love the theme!" - Marc D.</p>
+                    </div>
+                    <div class="testimonial">
+                        <img src="images/WhatsApp Image 2025-05-19 at 7.46.34 AM.jpeg" alt="Amina K.">
+                        <p>"Easy to play, and the draw is thrilling!" - Amina K.</p>
+                    </div>
+                    <div class="testimonial">
+                        <img src="images/WhatsApp Image 2025-05-19 at 7.46.34 AM.jpeg" alt="Lucas P.">
+                        <p>"I won a space kit, so cool!" - Lucas P.</p>
+                    </div>
+                    <div class="testimonial">
+                        <img src="images/temoi4.jpeg" alt="BOBO P.">
+                        <p>"LOVE YOU!" - BOBO P.</p>
+                    </div>
+                    <div class="testimonial">
+                        <img src="images/temoin.png" alt="Lucas P.">
+                        <p>"So cool!" - Lucas P.</p>
+                    </div>
+                    <div class="testimonial">
+                        <img src="images/temoin1.png" alt="REWARDS.">
+                        <p>"Cool!" - REWARDS.</p>
+                    </div>
+                    <div class="testimonial">
+                        <img src="images/temoin2.png" alt="REWARS">
+                        <p>"THANKS YOU!" - REWARS.</p>
+                    </div>
+                    <div class="testimonial">
+                        <img src="images/temoin6.jpeg" alt="REWARS.">
+                        <p>"GOD BLESS YOU!" - REWARS.</p>
+                    </div>
+                    <div class="testimonial">
+                        <img src="images/temoin7.jpeg" alt="PAULI">
+                        <p>"So cool!" - Pauli.</p>
+                    </div>
+                    <div class="testimonial">
+                        <img src="images/temoin8.jpeg" alt="JOAS">
+                        <p>"Wonderful day, so cool!" - Joas.</p>
+                    </div>
+                    <div class="testimonial">
+                        <img src="images/1c3010f7-fe89-4775-8988-74c720b6d721.png" alt="Marie">
+                        <p>"So cool!" - Marie.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="next-draw">
+                <h2>Next Draw in:</h2>
+                <div id="countdown"></div>
+            </div>
+        </section>
+
+        <!-- Section Entry -->
+        <section id="entry" class="section">
+            <div class="entry-form">
+                <h2>Enter MegaLucky</h2>
+                <form id="entryForm">
+                    <label for="playerName">Name</label>
+                    <input type="text" id="playerName" placeholder="Your name" required>
+                    <label for="playerEmail">Email</label>
+                    <input type="email" id="playerEmail" placeholder="Your email" required>
+                    <label>Choose 5 Numbers (1-50)</label>
+                    <div id="numberPicker" class="number-picker"></div>
+                    <label for="bonusNumber">Bonus Number (1-20)</label>
+                    <input type="number" id="bonusNumber" min="1" max="20" placeholder="Bonus" required>
+                    <button type="submit" class="btn">Submit Entry</button>
+                </form>
+                <div id="pendingChoices" class="pending-choices hidden"></div>
+                <a href="https://wa.me/+2290198950461?text=Here%20is%20my%20screenshot%20of%20my%20MegaLucky%20numbers" class="whatsapp-btn" target="_blank">Send via WhatsApp</a>
+            </div>
+        </section>
+
+        <!-- Section Draw -->
+        <section id="draw" class="section">
+            <div class="draw-section">
+                <h2>Galactic Draw</h2>
+                <p>Draw results are updated every 12 hours. Check back soon!</p>
+                <button class="btn" onclick="showLatestDraw()">View Latest Draw</button>
+                <div id="drawResults" class="hidden">
+                    <h3>Latest Draw Numbers</h3>
+                    <div id="drawAnimation" class="draw-animation"></div>
+                    <p id="winners"></p>
+                    <p id="celebration" class="celebration hidden">Congratulations! You're a Cosmic Winner!</p>
+                </div>
+                <div id="chosenNumbers" class="chosen-numbers hidden"></div>
+            </div>
+        </section>
+
+        <!-- Section Results -->
+        <section id="results" class="section">
+            <div class="results-section">
+                <h2>Draw History</h2>
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Numbers</th>
+                            <th>Bonus</th>
+                            <th>Winners</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsTableBody">
+                        <tr>
+                            <td colspan="4">No draws conducted yet.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Section How to Play -->
+        <section id="how-to-play" class="section">
+            <div class="how-to-play-section">
+                <h2>How to Play MegaLucky</h2>
+                <h3>Step 1: Register</h3>
+                <ul>
+                    <li>Enter your name and email in the Entry section.</li>
+                </ul>
+                <h3>Step 2: Pick Your Numbers</h3>
+                <ul>
+                    <li>Select 5 unique numbers from 1 to 50 using the number picker.</li>
+                    <li>Choose 1 bonus number from 1 to 20.</li>
+                </ul>
+                <h3>Step 3: Submit</h3>
+                <ul>
+                    <li>Click "Submit Entry" to join the next draw.</li>
+                </ul>
+                <h3>Step 4: Watch the Draw</h3>
+                <ul>
+                    <li>Check the draw every 12 hours to see if you’ve won!</li>
+                </ul>
+                <h3>Step 5: Send Your Numbers via WhatsApp</h3>
+                <ul>
+                    <li>Take a screenshot of your selected numbers.</li>
+                    <li>Click the "Send via WhatsApp" button to send your screenshot .</li>
+                </ul>
+                <h3>Step 6: Claiming Winnings</h3>
+                <ul>
+                    <li>Write to the manager on WhatsApp for processing fees and claiming winnings.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Section Leaderboard -->
+        <section id="leaderboard" class="section">
+            <div class="leaderboard-section">
+                <h2>Top Cosmic Explorers</h2>
+                <table class="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Name</th>
+                            <th>Wins</th>
+                            <th>Total Winnings</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboardTableBody">
+                        <tr>
+                            <td colspan="4">No winners yet.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Section Rules -->
+        <section id="rules" class="section">
+            <div class="rules-section">
+                <h2>MegaLucky Rules</h2>
+                <h3>1. Eligibility</h3>
+                <ul>
+                    <li>Open to individuals 18+ residing in jurisdictions where free sweepstakes are legal.</li>
+                    <li>Employees, organizers, or their immediate families are excluded.</li>
+                </ul>
+                <h3>2. Entry</h3>
+                <ul>
+                    <li>Free via www.megalucky.com. Choose 5 numbers (1-50) and 1 bonus number (1-20).</li>
+                    <li>One entry per person per day, verified by email.</li>
+                    <li>Deadline: 7:00 PM daily for the 8:00 PM draw.</li>
+                </ul>
+                <h3>3. Draws</h3>
+                <ul>
+                    <li>Every 12 hours, results remain unchanged for the period.</li>
+                    <li>Numbers generated by a certified system, presented by AstroBot.</li>
+                </ul>
+                <h3>4. Prize Structure</h3>
+                <ul>
+                    <li>Jackpot: $100,000,000 (5 numbers + bonus).</li>
+                    <li>Secondary prizes: $1,000,000 (5 numbers), $50,000 (4 numbers + bonus), $116,000 (4 numbers), etc.</li>
+                    <li>Non-monetary prizes: Space kit or VIP experiences for certain tiers.</li>
+                </ul>
+                <h3>5. Commission</h3>
+                <ul>
+                    <li>189 dollars of cash winnings payable before receipt for processing fees.</li>
+                    <li>A portion is donated to a charitable cause (space research).</li>
+                </ul>
+                <h3>6. Claiming Prizes</h3>
+                <ul>
+                    <li>Notification by email within 24 hours. Small prizes (≤$500) paid after commission.</li>
+                    <li>Claim deadline: 90 days, otherwise rolled over to a special draw.</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>© 2025 MegaLucky Organization. All rights reserved. | Data secured with cosmic encryption.</p>
+        <div class="social-links">
+            <a href="#">Facebook</a>
+            <a href="#">Twitter</a>
+            <a href="#">Instagram</a>
+        </div>
+    </footer>
+    <script>
+        // Gestion du menu hamburger
+        function toggleMenu() {
+            const navMenu = document.getElementById('nav-menu');
+            navMenu.classList.toggle('active');
+        }
+
+        // Navigation entre sections avec transition
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+                section.style.opacity = 0;
+            });
+            const targetSection = document.getElementById(sectionId);
+            targetSection.classList.add('active');
+            setTimeout(() => {
+                targetSection.style.opacity = 1;
+            }, 10);
+            document.getElementById('nav-menu').classList.remove('active');
+            if (sectionId === 'results') updateResultsTable();
+            if (sectionId === 'leaderboard') updateLeaderboard();
+            if (sectionId === 'entry') displayPendingChoices();
+            if (sectionId === 'draw') displayChosenNumbers();
+        }
+
+        // Générer des participants fictifs avec noms et prénoms
+        const firstNames = ["John", "Emma", "Michael", "Sarah", "David", "Laura", "James", "Emily", "Robert", "Lisa"];
+        const lastNames = ["Smith", "Johnson", "Brown", "Davis", "Wilson", "Martinez", "Taylor", "Anderson", "Thomas", "Garcia"];
+
+        function generateFakeName() {
+            const first = firstNames[Math.floor(Math.random() * firstNames.length)];
+            const last = lastNames[Math.floor(Math.random() * lastNames.length)];
+            return `${first} ${last}`;
+        }
+
+        function generateFakeNumbers() {
+            const numbers = [];
+            while (numbers.length < 5) {
+                const num = Math.floor(Math.random() * 50) + 1;
+                if (!numbers.includes(num)) numbers.push(num);
+            }
+            return numbers.sort((a, b) => a - b);
+        }
+
+        let entries = JSON.parse(localStorage.getItem('megaLuckyEntries')) || [];
+        let draws = JSON.parse(localStorage.getItem('megaLuckyDraws')) || [];
+        let isFirstEntry = localStorage.getItem('megaLuckyFirstEntry') === null;
+
+        // Générer 1000 participants fictifs si première visite
+        if (entries.length === 0) {
+            for (let i = 0; i < 1000; i++) {
+                const name = generateFakeName();
+                const email = `${name.toLowerCase().replace(' ', '')}@cosmicmail.com`;
+                entries.push({
+                    name,
+                    email,
+                    numbers: generateFakeNumbers(),
+                    bonus: Math.floor(Math.random() * 20) + 1,
+                    registrationDate: Date.now() - Math.floor(Math.random() * 72 * 60 * 60 * 1000)
+                });
+            }
+            localStorage.setItem('megaLuckyEntries', JSON.stringify(entries));
+        }
+
+        // Mettre à jour le compteur de participants
+        document.getElementById('participantCount').textContent = entries.length.toLocaleString();
+
+        // Initialiser le sélecteur de numéros
+        const numberPicker = document.getElementById('numberPicker');
+        for (let i = 1; i <= 50; i++) {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'number-btn';
+            btn.textContent = i;
+            btn.onclick = () => toggleNumber(i);
+            numberPicker.appendChild(btn);
+        }
+        let selectedNumbers = [];
+
+        function toggleNumber(num) {
+            const btn = numberPicker.children[num - 1];
+            if (selectedNumbers.includes(num)) {
+                selectedNumbers = selectedNumbers.filter(n => n !== num);
+                btn.classList.remove('selected');
+            } else if (selectedNumbers.length < 5) {
+                selectedNumbers.push(num);
+                btn.classList.add('selected');
+            }
+            selectedNumbers.sort((a, b) => a - b);
+        }
+
+        // Vérifier si l'utilisateur peut participer aujourd'hui
+        function canEnterToday(email) {
+            const lastEntries = JSON.parse(localStorage.getItem('megaLuckyLastEntries')) || {};
+            const today = new Date().toDateString();
+            return lastEntries[email] !== today;
+        }
+
+        function updateLastEntry(email) {
+            const lastEntries = JSON.parse(localStorage.getItem('megaLuckyLastEntries')) || {};
+            lastEntries[email] = new Date().toDateString();
+            localStorage.setItem('megaLuckyLastEntries', JSON.stringify(lastEntries));
+        }
+
+        // Afficher les choix en attente
+        function displayPendingChoices() {
+            const pendingChoices = document.getElementById('pendingChoices');
+            const currentUserEmail = localStorage.getItem('currentUserEmail');
+            const userEntry = entries.find(entry => entry.email === currentUserEmail);
+            if (userEntry) {
+                pendingChoices.classList.remove('hidden');
+                pendingChoices.textContent = `Your pending numbers: ${userEntry.numbers.join(', ')} | Bonus: ${userEntry.bonus}`;
+            } else {
+                pendingChoices.classList.add('hidden');
+            }
+        }
+
+        // Afficher les numéros choisis dans la section Draw pendant 72 heures
+        function displayChosenNumbers() {
+            const chosenNumbersDiv = document.getElementById('chosenNumbers');
+            const currentUserEmail = localStorage.getItem('currentUserEmail');
+            const userEntry = entries.find(entry => entry.email === currentUserEmail);
+            if (userEntry && (Date.now() - userEntry.registrationDate) < 72 * 60 * 60 * 1000) {
+                chosenNumbersDiv.classList.remove('hidden');
+                chosenNumbersDiv.textContent = `Your chosen numbers: ${userEntry.numbers.join(', ')} | Bonus: ${userEntry.bonus} (Expires in 72 hours)`;
+            } else {
+                chosenNumbersDiv.classList.add('hidden');
+            }
+        }
+
+        // Gestion du formulaire d'inscription
+        document.getElementById('entryForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('playerName').value;
+            const email = document.getElementById('playerEmail').value;
+            const bonus = parseInt(document.getElementById('bonusNumber').value);
+
+            if (!name || !email || selectedNumbers.length !== 5 || isNaN(bonus) || bonus < 1 || bonus > 20) {
+                alert('Please fill all fields correctly and select exactly 5 numbers (1-50) and a bonus (1-20).');
+                return;
+            }
+
+            if (!canEnterToday(email)) {
+                alert('You have already entered today. Come back tomorrow!');
+                return;
+            }
+
+            const registrationDate = Date.now();
+            entries.push({ name, email, numbers: [...selectedNumbers], bonus, registrationDate });
+            localStorage.setItem('megaLuckyEntries', JSON.stringify(entries));
+            document.getElementById('participantCount').textContent = entries.length.toLocaleString();
+            localStorage.setItem('currentUserEmail', email);
+            updateLastEntry(email);
+
+            if (isFirstEntry) {
+                localStorage.setItem('megaLuckyFirstEntry', 'false');
+                localStorage.setItem('megaLuckyFirstNumbers', JSON.stringify({ numbers: selectedNumbers, bonus, email }));
+                isFirstEntry = false;
+                alert('Congratulations! Your first entry is registered. Check the draw in 12 hours!');
+            } else {
+                alert('Entry submitted successfully! Check your pending choices.');
+            }
+            document.getElementById('entryForm').reset();
+            selectedNumbers = [];
+            numberPicker.querySelectorAll('.number-btn').forEach(btn => btn.classList.remove('selected'));
+            displayPendingChoices();
+            updateLeaderboard(); // Mettre à jour le leaderboard immédiatement après inscription
+        });
+
+        // Gestion des tirages toutes les 12 heures
+        function getNextDrawTime() {
+            const now = new Date();
+            const hours = now.getHours();
+            const nextDrawHour = hours < 12 ? 12 : hours < 24 ? 24 : 12;
+            const nextDrawDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), nextDrawHour, 0, 0);
+            if (nextDrawHour === 24) nextDrawDate.setDate(nextDrawDate.getDate() + 1);
+            return nextDrawDate;
+        }
+
+        function getLastDrawTime() {
+            const lastDraw = localStorage.getItem('megaLuckyLastDrawTime');
+            return lastDraw ? new Date(parseInt(lastDraw)) : null;
+        }
+
+        function updateLastDrawTime() {
+            localStorage.setItem('megaLuckyLastDrawTime', Date.now());
+        }
+
+        function shouldGenerateNewDraw() {
+            const lastDrawTime = getLastDrawTime();
+            if (!lastDrawTime) return true;
+            const now = new Date();
+            const diff = now - lastDrawTime;
+            return diff >= 12 * 60 * 60 * 1000; // 12 heures en millisecondes
+        }
+
+        // Générer ou afficher le dernier tirage
+        function showLatestDraw() {
+            const drawResults = document.getElementById('drawResults');
+            const drawAnimation = document.getElementById('drawAnimation');
+            const celebration = document.getElementById('celebration');
+            drawAnimation.innerHTML = '';
+            document.getElementById('winners').textContent = 'Loading results...';
+
+            let winningNumbers = [];
+            let winningBonus;
+            let winners = [];
+
+            if (shouldGenerateNewDraw() || draws.length === 0) {
+                const firstNumbers = JSON.parse(localStorage.getItem('megaLuckyFirstNumbers'));
+                if (firstNumbers && !draws.some(d => d.winners.some(w => w.includes(firstNumbers.email)))) {
+                    const userNumbers = firstNumbers.numbers;
+                    const userBonus = firstNumbers.bonus;
+                    const selectedNumbers = userNumbers.slice(0, 4);
+                    let extraNumber;
+                    do {
+                        extraNumber = Math.floor(Math.random() * 50) + 1;
+                    } while (userNumbers.includes(extraNumber));
+                    winningNumbers = [...selectedNumbers, extraNumber].sort((a, b) => a - b);
+                    do {
+                        winningBonus = Math.floor(Math.random() * 20) + 1;
+                    } while (winningBonus === userBonus);
+                } else {
+                    while (winningNumbers.length < 5) {
+                        const num = Math.floor(Math.random() * 50) + 1;
+                        if (!winningNumbers.includes(num)) winningNumbers.push(num);
+                    }
+                    winningNumbers.sort((a, b) => a - b);
+                    winningBonus = Math.floor(Math.random() * 20) + 1;
+                }
+
+                const prizeStructure = [
+                    { match: [5, true], prize: 100000000 },
+                    { match: [5, false], prize: 1000000 },
+                    { match: [4, true], prize: 50000 },
+                    { match: [4, false], prize: 116000 },
+                    { match: [3, true], prize: 100000 },
+                    { match: [3, false], prize: 100000 },
+                    { match: [2, true], prize: 50000 },
+                    { match: [2, false], prize: 50000 },
+                    { match: [1, true], prize: 30000 },
+                    { match: [1, false], prize: 30000 },
+                    { match: [0, true], prize: 0 }
+                ];
+
+                entries.forEach(entry => {
+                    const matchedNumbers = entry.numbers.filter(n => winningNumbers.includes(n)).length;
+                    const bonusMatch = entry.bonus === winningBonus;
+                    const prize = prizeStructure.find(p => p.match[0] === matchedNumbers && p.match[1] === bonusMatch);
+                    if (prize && prize.prize > 0) {
+                        const fee = prize.prize * 0.01;
+                        const netPrize = prize.prize - fee;
+                        winners.push(`${entry.name} won $${netPrize.toLocaleString()} after $${fee.toLocaleString()} fee!`);
+                    }
+                });
+
+                draws.push({
+                    date: new Date().toLocaleDateString('en-US'),
+                    winningNumbers,
+                    winningBonus,
+                    winners
+                });
+                localStorage.setItem('megaLuckyDraws', JSON.stringify(draws));
+                updateLastDrawTime();
+            } else {
+                const latestDraw = draws[draws.length - 1];
+                winningNumbers = latestDraw.winningNumbers;
+                winningBonus = latestDraw.winningBonus;
+                winners = latestDraw.winners;
+            }
+
+            const currentUserEmail = localStorage.getItem('currentUserEmail');
+            const userWinner = winners.find(w => w.includes(currentUserEmail));
+            const otherWinners = winners.filter(w => !w.includes(currentUserEmail));
+            const sortedWinners = userWinner ? [userWinner, ...otherWinners] : otherWinners;
+
+            drawResults.classList.remove('hidden');
+            let i = 0;
+            const revealNumbers = setInterval(() => {
+                if (i < winningNumbers.length) {
+                    const ball = document.createElement('div');
+                    ball.className = 'number-ball';
+                    ball.textContent = winningNumbers[i];
+                    drawAnimation.appendChild(ball);
+                    i++;
+                } else if (i === winningNumbers.length) {
+                    const bonusBall = document.createElement('div');
+                    bonusBall.className = 'bonus-ball';
+                    bonusBall.textContent = winningBonus;
+                    drawAnimation.appendChild(bonusBall);
+                    i++;
+                } else {
+                    clearInterval(revealNumbers);
+                    document.getElementById('winners').textContent = sortedWinners.length ? sortedWinners.join('\n') : 'No winners.';
+                    if (sortedWinners.some(w => w.includes('$116,000'))) {
+                        celebration.classList.remove('hidden');
+                    }
+                }
+            }, 800);
+
+            if (document.getElementById('results').classList.contains('active')) updateResultsTable();
+            if (document.getElementById('leaderboard').classList.contains('active')) updateLeaderboard();
+        }
+
+        // Mettre à jour le tableau des résultats
+        function updateResultsTable() {
+            const tableBody = document.getElementById('resultsTableBody');
+            tableBody.innerHTML = '';
+            if (draws.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="4">No draws conducted yet.</td></tr>';
+                return;
+            }
+            draws.forEach(draw => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${draw.date}</td>
+                    <td>${draw.winningNumbers.join(', ')}</td>
+                    <td>${draw.winningBonus}</td>
+                    <td>${draw.winners.length ? draw.winners.join('<br>') : 'None'}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Mettre à jour le classement
+        function updateLeaderboard() {
+            const tableBody = document.getElementById('leaderboardTableBody');
+            tableBody.innerHTML = '';
+            const winnerStats = {};
+            draws.forEach(draw => {
+                draw.winners.forEach(winner => {
+                    const [name, prizeText] = winner.split(' won ');
+                    const prize = parseFloat(prizeText.split(' after ')[0].replace('$', '').replace(/,/g, ''));
+                    if (!winnerStats[name]) winnerStats[name] = { wins: 0, total: 0 };
+                    winnerStats[name].wins += 1;
+                    winnerStats[name].total += prize;
+                });
+            });
+
+            // Toujours inclure l'utilisateur actuel
+            const currentUserEmail = localStorage.getItem('currentUserEmail');
+            const userEntry = entries.find(entry => entry.email === currentUserEmail);
+            if (userEntry) {
+                const userName = userEntry.name;
+                if (!winnerStats[userName]) {
+                    winnerStats[userName] = { wins: 0, total: 0 };
+                }
+            }
+
+            // Générer des personnes fictives pour le leaderboard
+            for (let i = 0; i < 5; i++) {
+                const fakeName = generateFakeName();
+                if (!winnerStats[fakeName]) {
+                    winnerStats[fakeName] = {
+                        wins: Math.floor(Math.random() * 5) + 1,
+                        total: Math.floor(Math.random() * 1000000) + 10000
+                    };
+                }
+            }
+
+            const leaderboard = Object.entries(winnerStats)
+                .map(([name, { wins, total }]) => ({ name, wins, total }))
+                .sort((a, b) => b.total - a.total);
+
+            leaderboard.forEach((entry, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${entry.name}</td>
+                    <td>${entry.wins}</td>
+                    <td>$${entry.total.toLocaleString()}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Compteur pour le prochain tirage toutes les 12 heures
+        function countdown() {
+            const drawDate = getNextDrawTime();
+            const now = new Date();
+            const diff = drawDate - now;
+
+            if (diff <= 0) {
+                document.getElementById('countdown').innerHTML = 'Draw in progress!';
+                return;
+            }
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            document.getElementById('countdown').innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+        }
+
+        setInterval(countdown, 1000);
+
+        // Particules animées optimisées
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const particles = [];
+        for (let i = 0; i < 50; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                radius: Math.random() * 2 + 1,
+                color: 'rgba(0, 255, 255, 0.5)',
+                speedX: (Math.random() - 0.5) * 1.5,
+                speedY: (Math.random() - 0.5) * 1.5
+            });
+        }
+
+        function drawParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(particle => {
+                ctx.beginPath();
+                ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+                ctx.fillStyle = particle.color;
+                ctx.fill();
+                particle.x += particle.speedX;
+                particle.y += particle.speedY;
+                if (particle.x < 0 || particle.x > canvas.width) particle.speedX *= -1;
+                if (particle.y < 0 || particle.y > canvas.height) particle.speedY *= -1;
+            });
+            requestAnimationFrame(drawParticles);
+        }
+
+        drawParticles();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Initialiser le leaderboard au chargement
+        updateLeaderboard();
+    </script>
+</body>
+</html>
